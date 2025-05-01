@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reserva de Salas - Multiva Montes Urales</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/moment.min.js"></script>
+  <link rel="icon" href="https://upload.wikimedia.org/wikipedia/commons/3/3f/Grupo_Financiero_Multiva_logo.svg">
+</head>
+<body class="bg-gradient-to-b from-blue-900 via-blue-800 to-blue-700 text-white min-h-screen font-sans">
+
+  <!-- Encabezado -->
+  <header class="p-4 flex items-center justify-between border-b border-yellow-400 shadow-md bg-blue-950">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/3/3f/Grupo_Financiero_Multiva_logo.svg" alt="Logo Multiva" class="h-12">
+    <h1 class="text-xl font-bold">Reserva de Salas de Juntas - Montes Urales</h1>
+  </header>
+
+  <!-- Mensaje de bienvenida -->
+  <section class="p-6 text-center">
+    <h2 class="text-2xl font-semibold mb-2">¡Bienvenido!</h2>
+    <p class="text-lg text-yellow-300">Gracias por utilizar nuestro sistema de reservas. Valoramos tu tiempo y colaboración.</p>
+  </section>
+
+  <!-- Secciones informativas -->
+  <section class="p-6 space-y-6">
+    <div>
+      <h3 class="text-xl font-bold text-yellow-400">Tu solicitud es importante</h3>
+      <p>Cada solicitud es tratada con seriedad, buscando dar un servicio eficiente y humano.</p>
+    </div>
+    <div>
+      <h3 class="text-xl font-bold text-yellow-400">Objetivo</h3>
+      <p>Asignar espacios de trabajo colaborativo de manera ordenada y respetuosa del tiempo de todos.</p>
+    </div>
+    <div>
+      <h3 class="text-xl font-bold text-yellow-400">Reglas de uso</h3>
+      <ul class="list-disc list-inside text-sm">
+        <li>Respetar el horario asignado y número de asistentes.</li>
+        <li>No consumir alimentos.</li>
+        <li>Dejar limpio y en orden al retirarse.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- Formulario -->
+  <form id="reservaForm" class="bg-white text-black max-w-2xl mx-auto p-6 rounded-2xl shadow-xl space-y-4">
+    <h3 class="text-2xl font-bold text-center text-blue-800">Formulario de Reserva</h3>
+    <div class="grid grid-cols-1 gap-4">
+      <input type="text" name="area" placeholder="Área solicitante" class="p-2 border rounded" required pattern="^[A-Za-zÁÉÍÓÚÑáéíóúñ\s]+$">
+      <input type="text" name="nombre" placeholder="Nombre completo" class="p-2 border rounded" required>
+      <input type="email" name="email" placeholder="Correo electrónico" class="p-2 border rounded" required>
+      <input type="number" name="asistentes" placeholder="Número de asistentes" class="p-2 border rounded" min="1" required>
+      <input type="date" name="fecha" class="p-2 border rounded" required>
+      <input type="time" name="hora_inicio" class="p-2 border rounded" required>
+      <input type="time" name="hora_fin" class="p-2 border rounded" required>
+      <div class="grid grid-cols-2 gap-2">
+        <input type="date" name="periodica_inicio" class="p-2 border rounded" placeholder="Inicio periódica">
+        <input type="date" name="periodica_fin" class="p-2 border rounded" placeholder="Fin periódica">
+      </div>
+      <select name="coffee" class="p-2 border rounded" required>
+        <option value="">¿Servicio de Coffee Break?</option>
+        <option value="Sí">Sí</option>
+        <option value="No">No</option>
+      </select>
+      <input type="text" name="director" placeholder="Director que autoriza" class="p-2 border rounded" required>
+    </div>
+    <button type="submit" class="bg-blue-700 hover:bg-blue-900 text-white p-2 rounded mt-4 w-full">Enviar Solicitud</button>
+    <p id="feedback" class="text-center text-green-600 font-semibold mt-2 hidden">✅ Gracias. ⏳ Redirigiendo al inicio...</p>
+  </form>
+
+  <!-- Footer -->
+  <footer class="text-center text-sm mt-10 text-yellow-300 p-4">
+    Si no puedes terminar tu solicitud ahora, vuelve pronto para completarla. ¡Tu tiempo es valioso!
+  </footer>
+
+  <!-- Script JS -->
+  <script>
+    const form = document.getElementById("reservaForm");
+    const feedback = document.getElementById("feedback");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const data = new FormData(form);
+      const json = Object.fromEntries(data.entries());
+
+      if (!json.email.includes("@")) {
+        alert("Por favor ingresa un correo válido.");
+        return;
+      }
+
+      try {
+        const res = await fetch("https://script.google.com/macros/s/AKfycbwqkIOnrvtAlrmEtrGKkGku2HvRWF5fkBIkEIxtMuOcVLEMJiTs28IfXWPCAhge6m1Kow/exec", {
+          method: "POST",
+          body: JSON.stringify(json),
+          headers: { "Content-Type": "application/json" },
+        });
+
+        if (res.ok) {
+          feedback.classList.remove("hidden");
+          form.reset();
+          window.scrollTo({ top: 0, behavior: "smooth" });
+          setTimeout(() => {
+            feedback.classList.add("hidden");
+          }, 5000);
+        } else {
+          alert("Error al enviar los datos. Inténtalo de nuevo.");
+        }
+      } catch (err) {
+        alert("No se pudo conectar con el servidor.");
+      }
+    });
+  </script>
+
+</body>
+</html>
